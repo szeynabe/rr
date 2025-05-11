@@ -4,8 +4,88 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>bonjour</h1>
+    <form id="formulaire">
+        <label>Nom:</label><br>
+        <input type="text" id="nom"><br>
+
+        <label>Prenom:</label><br>
+        <input type="text" id="prenom"><br>
+
+        <label>Email:</label><br>
+        <input type="email" id="email"><br>
+
+        <label for="pays">Pays :</label><br>
+        <select id="pays" name="pays">
+            <option value="" id="selection">-- Sélectionnez un pays --</option>
+            <option value="France">France</option>
+            <option value="Canada">Canada</option>
+            <option value="Etats-Unis">Etats-Unis</option>
+            <option value="Sénégal">Sénégal</option>
+            <option value="Autres">Autres</option>
+        </select>
+
+        <div id="case"></div>
+            <label>Genre :</label><br>
+            <label for="masculin">Masculin</label>
+            <input type="checkbox" id="masculin" name="genre" value="Masculin"><br>
+
+            <label for="feminin">Feminin</label>
+            <input type="checkbox" id="feminin" name="genre" value="Feminin"><br>
+            
+            <label>Loisirs :</label><br>
+            <label for="sport">Sport</label>
+            <input type="checkbox" id="sport" name="loisirs" value="Sport"><br>
+
+            <label for="lecture">Lecture</label>
+            <input type="checkbox" id="lecture" name="loisirs" value="Lecture"><br>
+
+            <label for="musique">Musique</label>
+            <input type="checkbox" id="musique" name="loisirs" value="Musique">
+        </div>
+        <button type="submit"  id="Soumettre">Soumettre</button>
+    </form>
+    
+    <script>
+        let formulaire=document.getElementById("formulaire"); 
+        let Soumettre=document.getElementById("Soumettre"); 
+        formulaire.addEventListener("submit",(e)=>{
+            e.preventDefault();
+            let nom=document.getElementById("nom").value;
+            let prenom=document.getElementById("prenom").value;
+            let email=document.getElementById("email").value;
+            
+            let div=document.createElement("div");
+            div.innerHTML=`
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>${nom}</th>
+                        <th>${prenom}</th>
+                        <th>${email}</th>
+                    </tr>
+                </thead>
+            </table>
+            <button class="supprimer">supprimer</button>
+            <button class="modifier">modifier</button>
+            `;
+            document.body.appendChild(div)
+
+            let supprimer=div.querySelector(".supprimer");
+            supprimer.addEventListener("click",()=>{
+                div.remove();
+            });
+
+            let modifier = div.querySelector(".modifier");
+            modifier.addEventListener("click", () => {
+            document.getElementById("nom").value = nom;
+            document.getElementById("prenom").value = prenom;
+            document.getElementById("email").value = email;
+            });
+            formulaire.reset();
+        });
+    </script>
 </body>
 </html>
