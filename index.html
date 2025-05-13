@@ -1,91 +1,136 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
+    <!DOCTYPE html>
+    <html lang="fr">
+    <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Formulaire avec tableau</title>
     <link rel="stylesheet" href="style.css">
-</head>
-<body>
+    </head>
+    <body>
+
+    <h2>Formulaire d'inscription</h2>
     <form id="formulaire">
-        <label>Nom:</label><br>
-        <input type="text" id="nom"><br>
-
-        <label>Prenom:</label><br>
-        <input type="text" id="prenom"><br>
-
-        <label>Email:</label><br>
-        <input type="email" id="email"><br>
-
-        <label for="pays">Pays :</label><br>
-        <select id="pays" name="pays">
-            <option value="" id="selection">-- Sélectionnez un pays --</option>
+        <label>Nom :
+        <input type="text" id="nom" required>
+        </label>
+        <label>Prénom :
+        <input type="text" id="prenom" required>
+        </label>
+        <label>Adresse E-mail :
+        <input type="email" id="email" required>
+        </label>
+        <label>Pays :
+        <select id="pays" required>
+            <option value="">--Choisissez un pays--</option>
             <option value="France">France</option>
             <option value="Canada">Canada</option>
             <option value="Etats-Unis">Etats-Unis</option>
             <option value="Sénégal">Sénégal</option>
             <option value="Autres">Autres</option>
         </select>
-
-        <div id="case"></div>
-            <label>Genre :</label><br>
-            <label for="masculin">Masculin</label>
-            <input type="checkbox" id="masculin" name="genre" value="Masculin"><br>
-
-            <label for="feminin">Feminin</label>
-            <input type="checkbox" id="feminin" name="genre" value="Feminin"><br>
-            
-            <label>Loisirs :</label><br>
-            <label for="sport">Sport</label>
-            <input type="checkbox" id="sport" name="loisirs" value="Sport"><br>
-
-            <label for="lecture">Lecture</label>
-            <input type="checkbox" id="lecture" name="loisirs" value="Lecture"><br>
-
-            <label for="musique">Musique</label>
-            <input type="checkbox" id="musique" name="loisirs" value="Musique">
+        </label>
+        <label>Genre :</label>
+        <div class="checkbox-group">
+            <label><input type="radio" name="genre" value="Masculin"> Masculin</label>
+            <label><input type="radio" name="genre" value="Féminin"> Féminin</label>
         </div>
-        <button type="submit"  id="Soumettre">Soumettre</button>
+        <label>Loisirs :</label>
+        <div class="checkbox-group">
+            <label><input type="checkbox" name="loisirs" value="Sport"> Sport</label>
+            <label><input type="checkbox" name="loisirs" value="Lecture"> Lecture</label>
+            <label><input type="checkbox" name="loisirs" value="Musique"> Musique</label>
+        </div>
+        <button type="submit">Soumettre</button>
     </form>
-    
+
+    <h3>Informations Soumises :</h3>
+    <table id="tableau">
+        <thead>
+        <tr>
+            <th>Nom</th>
+            <th>Prénom</th>
+            <th>Email</th>
+            <th>Pays</th>
+            <th>Genre</th>
+            <th>Loisirs</th>
+            <th>ACTIONS</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Les données s'ajoutent ici -->
+        </tbody>
+    </table>
+
     <script>
-        let formulaire=document.getElementById("formulaire"); 
-        let Soumettre=document.getElementById("Soumettre"); 
-        formulaire.addEventListener("submit",(e)=>{
-            e.preventDefault();
-            let nom=document.getElementById("nom").value;
-            let prenom=document.getElementById("prenom").value;
-            let email=document.getElementById("email").value;
-            
-            let div=document.createElement("div");
-            div.innerHTML=`
-            <table border="1">
-                <thead>
-                    <tr>
-                        <th>${nom}</th>
-                        <th>${prenom}</th>
-                        <th>${email}</th>
-                    </tr>
-                </thead>
-            </table>
-            <button class="supprimer">supprimer</button>
-            <button class="modifier">modifier</button>
-            `;
-            document.body.appendChild(div)
+        const formulaire = document.getElementById("formulaire");
+        const tableau = document.querySelector("#tableau tbody");
+        let ligneModif = null;
 
-            let supprimer=div.querySelector(".supprimer");
-            supprimer.addEventListener("click",()=>{
-                div.remove();
-            });
+        formulaire.addEventListener("submit", (e) => {
+        e.preventDefault();
 
-            let modifier = div.querySelector(".modifier");
-            modifier.addEventListener("click", () => {
-            document.getElementById("nom").value = nom;
-            document.getElementById("prenom").value = prenom;
-            document.getElementById("email").value = email;
-            });
-            formulaire.reset();
+        const nom = document.getElementById("nom").value;
+        const prenom = document.getElementById("prenom").value;
+        const email = document.getElementById("email").value;
+        const pays = document.getElementById("pays").value;
+        const genre = document.querySelector('input[name="genre"]:checked')?.value || "";
+        const loisirs = Array.from(document.querySelectorAll('input[name="loisirs"]:checked')).map(cb => cb.value).join(", ");
+
+        if (ligneModif) {
+            // Modifier ligne existante
+            ligneModif.innerHTML = ligneHTML(nom, prenom, email, pays, genre, loisirs);
+            ajouterActions(ligneModif);
+            ligneModif = null;
+        } else {
+            // Ajouter une nouvelle ligne
+            const ligne = document.createElement("tr");
+            ligne.innerHTML = ligneHTML(nom, prenom, email, pays, genre, loisirs);
+            ajouterActions(ligne);
+            tableau.appendChild(ligne);
+        }
+
+        formulaire.reset();
         });
+
+        function ligneHTML(nom, prenom, email, pays, genre, loisirs) {
+        return `
+            <td>${nom}</td>
+            <td>${prenom}</td>
+            <td>${email}</td>
+            <td>${pays}</td>
+            <td>${genre}</td>
+            <td>${loisirs}</td>
+            <td class="actions">
+            <button class="modifier">Modifier</button>
+            <button class="supprimer">Supprimer</button>
+            </td>
+        `;
+        }
+
+        function ajouterActions(ligne) {
+        ligne.querySelector(".supprimer").addEventListener("click", () => {
+            ligne.remove();
+        });
+
+        ligne.querySelector(".modifier").addEventListener("click", () => {
+            const cellules = ligne.children;
+            document.getElementById("nom").value = cellules[0].textContent;
+            document.getElementById("prenom").value = cellules[1].textContent;
+            document.getElementById("email").value = cellules[2].textContent;
+            document.getElementById("pays").value = cellules[3].textContent;
+
+            const genre = cellules[4].textContent;
+            document.querySelectorAll('input[name="genre"]').forEach(r => {
+            r.checked = r.value === genre;
+            });
+
+            const loisirs = cellules[5].textContent.split(", ");
+            document.querySelectorAll('input[name="loisirs"]').forEach(cb => {
+            cb.checked = loisirs.includes(cb.value);
+            });
+
+            ligneModif = ligne;
+        });
+        }
     </script>
-</body>
-</html>
+    </body>
+    </html>
